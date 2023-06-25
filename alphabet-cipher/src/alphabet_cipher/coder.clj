@@ -46,4 +46,10 @@
 (assert (= "cppa" (decode "z" "booz")))
 
 (defn decipher [cipher message]
-  "decypherme")
+  (let [offsets      (map - (map int cipher) (map int message))
+        longest-key  (apply str (map char (fit-into-alphas (map #(+ min-char %) offsets))))
+        pile-of-keys (map #(apply str %) (map #(take % longest-key) (map inc (range (count longest-key)))))]
+    (first (filter #(= cipher (encode % message)) pile-of-keys))))
+
+(assert (= "a" (decipher "booz" "booz")))
+(assert (= "b" (decipher "cppa" "booz")))
